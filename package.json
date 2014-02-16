@@ -1,0 +1,17 @@
+{
+	"name": "toad",
+	"description": "Toad",
+	"version": "0.0.1",
+	"author": "Shawn Jonnet",
+	"dependencies": {
+		"commander": "2.x.x",
+		"lodash": "2.x.x",
+		"mocha": "1.x.x"
+	},
+	"bin": {
+		"smac": "./bin/toad"
+	},
+	"engines": {
+		"node": ">= 0.10.0"
+	}
+}

@@ -1,0 +1,101 @@
+#!/usr/bin/env node
+/**
+ * Toad App
+ * Copyright(c) 2014 Koreviz
+ * MIT Licensed
+ */
+var fs = require('fs'),
+program = require('commander'),
+toad = require('../lib/toad')()
+
+// CLI
+program
+.version('0.0.1')
+.usage('[options] [dir|file ...]')
+.option('-c, --compress', 'Compress')
+.option('-d, --decompress', 'Decompress')
+.parse(process.argv)
+
+
+var stdin = function() {
+    var buf = ''
+    process.stdin.setEncoding('utf8')
+
+    try {
+        process.stdin.on('data',
+        function(chunk) {
+            buf += chunk
+        })
+
+        process.stdin.on('end',
+        function() {
+            
+            if (program.compress || !program.decompress)
+            process.stdout.write(toad.compress(buf))
+            else
+            process.stdout.write(toad.decompress(buf))
+        }).resume()
+    } catch(err) {
+        process.stderr.write(err)
+    }
+},
+
+
+run = function(path) {
+	var re = /\.(txt|toad)$/
+    
+	fs.lstat(path,
+    function(err, stat) {
+        if (err) throw err
+        
+        if (stat.isFile() && re.test(path)) {
+            fs.readFile(path, 'utf8',
+            function(err, str) {
+                if (err) throw err
+
+				var res
+				if (program.compress || !program.decompress) {
+	                path = path.replace(re, '.toad')
+					res = toad.compress(str)
+				}
+                else {
+                    path = path.replace(re, '.txt')
+                    res = toad.decompress(str)
+                }
+
+				fs.writeFile(path, res,
+                function(err) {
+                    if (err) throw err
+                    console.log('  \033[90m' + (program.compress || !program.decompress ? 'compress': 'decompress') + ' \033[36m%s\033[0m', path)
+                })
+            })
+
+		
+        } 
+        // Found directory
+        else if (stat.isDirectory()) {
+            fs.readdir(path,
+            function(err, files) {
+                if (err) throw err
+                files.map(function(filename) {
+                    return path + '/' + filename
+                }).forEach(run)
+            })
+        }
+    })	
+}
+
+// compile files
+var files = program.args
+if (files.length) {
+
+	files.forEach(
+    function(path) { 
+        run(path)
+    })
+	
+	process.on('exit', console.log)
+// stdio
+} 
+else
+stdin()
