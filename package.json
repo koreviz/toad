@@ -5,7 +5,7 @@
 	"author": "Shawn Jonnet",
 	"dependencies": {
 		"commander": "2.x.x",
-		"lodash": "2.x.x",
+		"lodash": "4.x.x",
 		"mocha": "1.x.x"
 	},
 	"bin": {
