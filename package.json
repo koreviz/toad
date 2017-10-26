@@ -6,7 +6,7 @@
 	"dependencies": {
 		"commander": "2.x.x",
 		"lodash": "4.x.x",
-		"mocha": "1.x.x"
+		"mocha": "4.x.x"
 	},
 	"bin": {
 		"smac": "./bin/toad"
